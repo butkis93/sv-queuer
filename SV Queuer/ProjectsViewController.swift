@@ -1,143 +1,120 @@
 import UIKit
 
-class ProjectsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class ProjectsViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
-    var projects: Array<Dictionary<String, AnyObject?>>?
-    var selProj: Dictionary<String, AnyObject?>?
+    
+    var projects: [ProjectModel]?
+    var selectedProject: ProjectModel?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-title = "Projects"
-        var request = URLRequest(url: URL(string: "https://queuer-production.herokuapp.com/api/v1/projects")!)
-        request.addValue("application/json", forHTTPHeaderField: "Content-type")
+        
+        configure()
+        fetchProjects()
+    }
+
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let projectViewController = segue.destination as? ProjectViewController {
+            projectViewController.project = selectedProject
+        }
+    }
+}
+
+// Mark: Actions
+private extension ProjectsViewController {
+    @objc func promptCreateProject() {
+        let creatProjectPrompt = UIAlertController(title: StringConstants.creatProjectPromptTitle, message: nil, preferredStyle: .alert)
+        let addProjectAction = UIAlertAction(title: StringConstants.okActionTitle, style: .default) { [weak self] _ in
+            let name = creatProjectPrompt.textFields?.first?.text
+            
+            self?.addProject(name: name)
+        }
+        
+        let cancelAction = UIAlertAction(title: StringConstants.cancelActionTitle, style: .cancel, handler: { (action) in
+            creatProjectPrompt.dismiss(animated: true, completion: nil)
+        })
+        
+        creatProjectPrompt.addAction(addProjectAction)
+        creatProjectPrompt.addAction(cancelAction)
+        creatProjectPrompt.addTextField { textfield in
+            textfield.placeholder = StringConstants.namePlaceholder
+        }
+        
+        present(creatProjectPrompt, animated: true, completion: nil)
+    }
+}
+
+// Mark: Utility + Networking functions
+private extension ProjectsViewController {
+    func configure() {
+        title = StringConstants.projectsTitle
         tableView.dataSource = self
         tableView.delegate = self
-        request.addValue(UserDefaults.standard.string(forKey: "apiKey")!, forHTTPHeaderField: "X-Qer-Authorization")
-        request.addValue("application/json", forHTTPHeaderField: "Accept")
-        URLSession(configuration: URLSessionConfiguration.default).dataTask(with: request, completionHandler: { (data, response, optError) in
-            DispatchQueue.main.async{
-                if let error = optError {
-                    UIAlertView(title: "Ruh roh", message: error.localizedDescription + "\nMaybe check your internet?", delegate: nil, cancelButtonTitle: ":(").show()
-                }
-                    if let jsonData = data {
-                        self.projects = try! JSONSerialization.jsonObject(with: jsonData, options: .allowFragments) as? Array<Dictionary<String, AnyObject?>>
-                            self.tableView.reloadData()
-//                        }catch let jsonError as NSError {
-//
-//                        }
-                    }else{
 
-                }
-            }
-        }).resume()
-        navigationItem.rightBarButtonItem=UIBarButtonItem(barButtonSystemItem: .add, target: self, action: Selector("promptProjCreate"))
+        navigationController?.navigationBar.barTintColor = UIColor.navigationTeal
         
-        // Do any additional setup after loading the view.
+        let rightBarButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(ProjectsViewController.promptCreateProject))
+        navigationItem.rightBarButtonItem = rightBarButton
     }
     
+    func fetchProjects() {
+        let request = HerokuRequest(path: "projects", httpMethod: HttpMethod.get)
+        HerokuService.send(with: request, responseType: [ProjectModel].self, onSuccess: { [weak self] response, urlResponse in
+            if let response = response as? [ProjectModel] {
+                self?.projects = response
+                
+                DispatchQueue.main.async {
+                    self?.tableView.reloadData()
+                }
+            }
+        }) { [weak self] requestError in
+            DispatchQueue.main.async {
+                let errorAlert = UIAlertController.errorAlert(with: requestError, completion: nil)
+                self?.present(errorAlert, animated: true, completion: nil)
+            }
+        }
+    }
+    
+    func addProject(name: String?) {
+        let requestBody = ProjectModel(name: name, color: NumberConstants.defaultProjectColor)
+        let request = HerokuRequest(path: "projects", httpBody: requestBody, httpMethod: HttpMethod.post)
+        
+        HerokuService.send(with: request, responseType: ProjectModel.self, onSuccess: { [weak self] response, urlResponse in
+            self?.fetchProjects()
+        }, onFail: { [weak self] requestError in
+            DispatchQueue.main.async {
+                let errorAlert = UIAlertController.errorAlert(with: requestError, completion: nil)
+                self?.present(errorAlert, animated: true, completion: nil)
+            }
+        })
+    }
+}
+
+// Mark: UITableViewDataSource
+extension ProjectsViewController: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
-
-    @objc func promptProjCreate() {
-        let vc = UIAlertController(title: "Project name", message: nil, preferredStyle: .alert)
-        
-        vc.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action) in
-            vc.dismiss(animated: true, completion: nil)
-            var request = URLRequest(url: URL(string: AppDelegate.PROJECTS_URL)!)
-            request.httpBody = try? JSONSerialization.data(withJSONObject: ["project" : ["name": vc.textFields![0].text as? AnyObject, "color": -13508189 as AnyObject]], options: .prettyPrinted)
-            request.addValue("application/json", forHTTPHeaderField: "Content-type")
-                request.addValue(UserDefaults.standard.string(forKey: "apiKey")!, forHTTPHeaderField: "X-Qer-Authorization")
-            request.httpMethod="POST"
-            request.addValue("application/json", forHTTPHeaderField: "Accept")
-            URLSession(configuration: URLSessionConfiguration.default).dataTask(with: request, completionHandler: { (data, response, optError) in
-                DispatchQueue.main.async{
-                    if let error = optError
-                    {
-                        UIAlertView(title: "Ruh roh", message: error.localizedDescription + "\nMaybe check your internet?", delegate: nil, cancelButtonTitle: ":(").show()
-                    }
-                    var request = URLRequest(url: URL(string: "https://queuer-production.herokuapp.com/api/v1/projects")!)
-                    request.addValue("application/json", forHTTPHeaderField: "Content-type")
-                    request.addValue(UserDefaults.standard.string(forKey: "apiKey")!, forHTTPHeaderField: "X-Qer-Authorization")
-                    request.addValue("application/json", forHTTPHeaderField: "Accept")
-                    URLSession(configuration: URLSessionConfiguration.default).dataTask(with: request, completionHandler: { (data, response, optError) in
-                        DispatchQueue.main.async{
-                            if let error = optError {
-                                UIAlertView(title: "Ruh roh", message: error.localizedDescription + "\nMaybe check your internet?", delegate: nil, cancelButtonTitle: ":(").show()
-                            }
-                            if let jsonData = data {
-                                self.projects = try! JSONSerialization.jsonObject(with: jsonData, options: .allowFragments) as? Array<Dictionary<String, AnyObject?>>
-                                self.tableView.reloadData()
-                                //                        }catch let jsonError as NSError {
-                                //
-                                //                        }
-                            }
-                            else{
-                            }
-                        }
-                    }).resume()
-                }
-            }).resume()
-        }))
-        
-        vc.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action) in
-            vc.dismiss(animated: true, completion: nil)
-        }))
-        vc.addTextField { (textfield) in
-            textfield.placeholder = "Name"
-        }
-        
-        present(vc, animated: true, completion: nil)
-    }
     
-    
-    
-    
-    
-    
-    
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "project")
-        cell?.textLabel?.text = (projects![indexPath.row])["name"]! as? String
-        return cell!;
-    }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let vC = segue.destination as? ProjectViewController {
-            vC.project = selProj;
-        }
-    }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if let count = projects?.count {
-            return count
-        }
-        else
-        {
-            return 0;
-        }
+        return projects?.count ?? 0
     }
     
-    
-    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "projectCell") else {
+            return UITableViewCell()
+        }
+        
+        cell.textLabel?.text = projects?[indexPath.row].name ?? ""
+        return cell
+    }
+}
+
+// Mark: UITableViewDelegate
+extension ProjectsViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        selProj = projects![indexPath.row];
+        selectedProject = projects?[indexPath.row]
         tableView.deselectRow(at: indexPath, animated: true)
         performSegue(withIdentifier: "viewproject", sender: self)
     }
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

@@ -16,6 +16,15 @@
 		4931A7811FEC18090095EFEA /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4931A7801FEC18090095EFEA /* LoginViewController.swift */; };
 		4931A7831FEC18190095EFEA /* ProjectsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4931A7821FEC18190095EFEA /* ProjectsViewController.swift */; };
 		4931A7851FEC18380095EFEA /* ProjectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4931A7841FEC18380095EFEA /* ProjectViewController.swift */; };
+		9DBBE51A2020178000F97EC6 /* HerokuService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DBBE5192020178000F97EC6 /* HerokuService.swift */; };
+		9DBBE51D202017BA00F97EC6 /* HerokuRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DBBE51C202017BA00F97EC6 /* HerokuRequest.swift */; };
+		9DBBE52020202FA200F97EC6 /* Strings+Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DBBE51F20202FA200F97EC6 /* Strings+Utility.swift */; };
+		9DBBE524202045EF00F97EC6 /* LoginRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DBBE523202045EF00F97EC6 /* LoginRequest.swift */; };
+		9DBBE5262020619800F97EC6 /* LoginResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DBBE5252020619800F97EC6 /* LoginResponse.swift */; };
+		9DBBE5282020662500F97EC6 /* Numbers+Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DBBE5272020662500F97EC6 /* Numbers+Utility.swift */; };
+		9DBBE52C2021742100F97EC6 /* ProjectModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DBBE52B2021742100F97EC6 /* ProjectModels.swift */; };
+		9DBBE5322022957B00F97EC6 /* Extensions+Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DBBE5312022957B00F97EC6 /* Extensions+Utility.swift */; };
+		9DBBE53420229C7100F97EC6 /* Color+Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DBBE53320229C7100F97EC6 /* Color+Utility.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,6 +51,15 @@
 		4931A7801FEC18090095EFEA /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		4931A7821FEC18190095EFEA /* ProjectsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsViewController.swift; sourceTree = "<group>"; };
 		4931A7841FEC18380095EFEA /* ProjectViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectViewController.swift; sourceTree = "<group>"; };
+		9DBBE5192020178000F97EC6 /* HerokuService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HerokuService.swift; sourceTree = "<group>"; };
+		9DBBE51C202017BA00F97EC6 /* HerokuRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HerokuRequest.swift; sourceTree = "<group>"; };
+		9DBBE51F20202FA200F97EC6 /* Strings+Utility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Strings+Utility.swift"; sourceTree = "<group>"; };
+		9DBBE523202045EF00F97EC6 /* LoginRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginRequest.swift; sourceTree = "<group>"; };
+		9DBBE5252020619800F97EC6 /* LoginResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginResponse.swift; sourceTree = "<group>"; };
+		9DBBE5272020662500F97EC6 /* Numbers+Utility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Numbers+Utility.swift"; sourceTree = "<group>"; };
+		9DBBE52B2021742100F97EC6 /* ProjectModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectModels.swift; sourceTree = "<group>"; };
+		9DBBE5312022957B00F97EC6 /* Extensions+Utility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extensions+Utility.swift"; sourceTree = "<group>"; };
+		9DBBE53320229C7100F97EC6 /* Color+Utility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Utility.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,6 +83,8 @@
 		4931A7541FEC11C10095EFEA = {
 			isa = PBXGroup;
 			children = (
+				9DBBE51E20202F0500F97EC6 /* Utility */,
+				9DBBE51B202017A100F97EC6 /* Webservices */,
 				4931A75F1FEC11C10095EFEA /* SV Queuer */,
 				4931A7741FEC11C10095EFEA /* SV QueuerTests */,
 				4931A75E1FEC11C10095EFEA /* Products */,
@@ -103,6 +123,45 @@
 				4931A7771FEC11C10095EFEA /* Info.plist */,
 			);
 			path = "SV QueuerTests";
+			sourceTree = "<group>";
+		};
+		9DBBE51B202017A100F97EC6 /* Webservices */ = {
+			isa = PBXGroup;
+			children = (
+				9DBBE5222020346200F97EC6 /* ResponseModels */,
+				9DBBE5212020345600F97EC6 /* RequestModels */,
+				9DBBE5192020178000F97EC6 /* HerokuService.swift */,
+				9DBBE51C202017BA00F97EC6 /* HerokuRequest.swift */,
+			);
+			path = Webservices;
+			sourceTree = "<group>";
+		};
+		9DBBE51E20202F0500F97EC6 /* Utility */ = {
+			isa = PBXGroup;
+			children = (
+				9DBBE51F20202FA200F97EC6 /* Strings+Utility.swift */,
+				9DBBE5272020662500F97EC6 /* Numbers+Utility.swift */,
+				9DBBE5312022957B00F97EC6 /* Extensions+Utility.swift */,
+				9DBBE53320229C7100F97EC6 /* Color+Utility.swift */,
+			);
+			path = Utility;
+			sourceTree = "<group>";
+		};
+		9DBBE5212020345600F97EC6 /* RequestModels */ = {
+			isa = PBXGroup;
+			children = (
+				9DBBE523202045EF00F97EC6 /* LoginRequest.swift */,
+			);
+			path = RequestModels;
+			sourceTree = "<group>";
+		};
+		9DBBE5222020346200F97EC6 /* ResponseModels */ = {
+			isa = PBXGroup;
+			children = (
+				9DBBE5252020619800F97EC6 /* LoginResponse.swift */,
+				9DBBE52B2021742100F97EC6 /* ProjectModels.swift */,
+			);
+			path = ResponseModels;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -208,9 +267,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9DBBE5322022957B00F97EC6 /* Extensions+Utility.swift in Sources */,
+				9DBBE52C2021742100F97EC6 /* ProjectModels.swift in Sources */,
+				9DBBE524202045EF00F97EC6 /* LoginRequest.swift in Sources */,
 				4931A7851FEC18380095EFEA /* ProjectViewController.swift in Sources */,
+				9DBBE52020202FA200F97EC6 /* Strings+Utility.swift in Sources */,
+				9DBBE5282020662500F97EC6 /* Numbers+Utility.swift in Sources */,
 				4931A7831FEC18190095EFEA /* ProjectsViewController.swift in Sources */,
+				9DBBE5262020619800F97EC6 /* LoginResponse.swift in Sources */,
 				4931A7811FEC18090095EFEA /* LoginViewController.swift in Sources */,
+				9DBBE51A2020178000F97EC6 /* HerokuService.swift in Sources */,
+				9DBBE53420229C7100F97EC6 /* Color+Utility.swift in Sources */,
+				9DBBE51D202017BA00F97EC6 /* HerokuRequest.swift in Sources */,
 				4931A7631FEC11C10095EFEA /* ViewController.swift in Sources */,
 				4931A7611FEC11C10095EFEA /* AppDelegate.swift in Sources */,
 			);

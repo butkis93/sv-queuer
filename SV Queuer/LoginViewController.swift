@@ -1,54 +1,43 @@
 import UIKit
 
 class LoginViewController: UIViewController {
-    @IBOutlet weak var usernameFiedl: UITextField!
-    @IBOutlet weak var password_field: UITextField!
+    @IBOutlet weak var usernameField: UITextField!
+    @IBOutlet weak var passwordField: UITextField!
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
-    @IBAction func loginpressed(_ sender: Any) {
-        var request = URLRequest(url: URL(string: "https://queuer-production.herokuapp.com/api/v1/session")!)
-        request.httpMethod = "POST"
-        request.httpBody = try? JSONSerialization.data(withJSONObject: ["username": usernameFiedl.text, "password": password_field.text], options: .prettyPrinted)
-        request.addValue("application/json", forHTTPHeaderField: "Content-type")
-        request.addValue("application/json", forHTTPHeaderField: "Accept")
-        URLSession(configuration: URLSessionConfiguration.default).dataTask(with: request, completionHandler: { (data, response, optError) in
-            DispatchQueue.main.async{
-                    if let error = optError {
-                        UIAlertView(title: "Ruh roh", message: error.localizedDescription + "\nMaybe check your internet?", delegate: nil, cancelButtonTitle: ":(").show()
-                    }
-                        if let code = (response as? HTTPURLResponse)?.statusCode {
-                        if let jsonData = data {
-                            do {
-                                let dict = try JSONSerialization.jsonObject(with: jsonData, options: .allowFragments) as? NSDictionary
-                                UserDefaults.standard.set(dict?["api_key"], forKey: "apiKey")
-                                self.performSegue(withIdentifier: "projects", sender: self)
-                            }catch let jsonError as NSError {
-                                
-                            }
-                        }else{
-                            }
-                }
+    @IBAction func loginPressed(_ sender: Any) {
+        guard let username = usernameField.text, !username.isEmpty else {
+            //Display alert for valid username
+            return
+        }
+        
+        guard let password = passwordField.text, !password.isEmpty else {
+            //Display alert for valid password
+            return
+        }
+        
+        let requestBody = LoginRequest(username: username, password: password)
+        let request = HerokuRequest(path: "session", httpBody: requestBody, httpMethod: .post)
+        
+        HerokuService.send(with: request, responseType: LoginResponse.self, onSuccess: { [weak self] response, urlResponse in
+            guard let code = urlResponse as? HTTPURLResponse, code.statusCode == NumberConstants.successCode else {
+                // Will be assuming status code 200 is success here
+                // may need to handle any other codes in different ways
+                return
             }
-        }).resume()
+            
+            if let loginResponse = response as? LoginResponse {
+                UserDefaults.standard.set(loginResponse.apiKey, forKey: StringConstants.apiKey)
+                DispatchQueue.main.async {
+                    self?.performSegue(withIdentifier: "projects", sender: self)
+                }
+            } else {
+                // Log error
+            }
+        }) { [weak self] requestError in
+            DispatchQueue.main.async {
+                let errorAlert = UIAlertController.errorAlert(with: requestError, completion: nil)
+                self?.present(errorAlert, animated: true, completion: nil)
+            }
+        }
     }
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }
